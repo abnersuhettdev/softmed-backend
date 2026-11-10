@@ -1,0 +1,29 @@
+[Unit]
+Description=SoftMed Backend API
+After=network.target postgresql.service redis-server.service
+Requires=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=softmed-deploy
+Group=softmed-deploy
+WorkingDirectory=/var/www/softmed-backend
+Environment="PATH=/var/www/softmed-backend/venv/bin"
+EnvironmentFile=/var/www/softmed-backend/.env
+ExecStart=/var/www/softmed-backend/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=softmed-backend
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/softmed-backend
+
+[Install]
+WantedBy=multi-user.target
+
